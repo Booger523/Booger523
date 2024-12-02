@@ -1,0 +1,65 @@
+START
+
+    Define CONSTANTS:
+        BASE_FEE = 5               // base fee for texting service
+        FIRST_100_INCLUDED = 100   // first 100 messages included in base fee
+        TAX_RATE = 0.14            // tax rate is 14%
+        MESSAGE_CHARGE = 0.03      // charge per text after first 100 but before 300
+        OVER_300_CHARGE = 0.02     // charge per text after the 300th message
+
+    Define sentinel_value as -1    // to stop entering new data
+    
+    REPEAT
+        // Collect customer data
+        Prompt user to enter area code (3 digits)
+        Input area_code
+
+        IF area_code is sentinel_value THEN
+            BREAK the loop
+
+        Prompt user to enter phone number (7 digits)
+        Input phone_number
+
+        Prompt user to enter total number of text messages sent
+        Input num_messages
+
+        // Display input data
+        PRINT "Area Code: ", area_code
+        PRINT "Phone Number: ", phone_number
+        PRINT "Total Messages Sent: ", num_messages
+
+        // Initialize variables
+        total_bill = BASE_FEE      // Start with the base fee
+
+        IF num_messages > FIRST_100_INCLUDED THEN
+            IF num_messages <= 300 THEN
+                additional_messages = num_messages - FIRST_100_INCLUDED
+                total_bill += additional_messages * MESSAGE_CHARGE
+            ELSE
+                // Calculate messages up to 300
+                additional_messages = 200
+                total_bill += additional_messages * MESSAGE_CHARGE
+                // Calculate messages after 300
+                additional_messages = num_messages - 300
+                total_bill += additional_messages * OVER_300_CHARGE
+            END IF
+        END IF
+
+        // Add tax to the bill
+        total_with_tax = total_bill * (1 + TAX_RATE)
+
+        // Display the bill before and after tax
+        PRINT "Total Bill Before Tax: $", total_bill
+        PRINT "Total Bill After Tax: $", total_with_tax
+
+        // Display details if bill after tax is greater than $10
+        IF total_with_tax > 10 THEN
+            PRINT "Details for customer with area code ", area_code, " and phone number ", phone_number, " have been displayed."
+        END IF
+
+    UNTIL area_code == sentinel_value
+
+    // End of data collection
+    PRINT "Data collection complete."
+
+END
